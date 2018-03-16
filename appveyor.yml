@@ -1,0 +1,25 @@
+version: 1.0.{build}
+
+environment:
+  TOKEN:
+    secure: hIJKQ1Spg7Z+jgBznNcdpXtxyTRWBAFQGAukgMK7rtPQQtNTLXJNKFbKnZH8g33A
+
+platform:
+  - x64
+  
+build_script:
+  - ps: >-
+      ./gobetween.ps1;
+      choco pack output/gobetween.nuspec
+
+test_script:
+  - ps: cinst gobetween -fdvy -source "$pwd;http://chocolatey.org/api/v2/"
+  - ps: cuninst -fdvy gobetween
+  - ps: cinst gobetween -fdvy --x86 -source "$pwd;http://chocolatey.org/api/v2/"
+  - ps: cuninst -fdvy gobetween
+
+ deploy_script:
+   - ps: >-
+       ./deploy.ps1;
+artifacts:
+  - path: '**\*.nupkg'

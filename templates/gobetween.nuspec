@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>gobetween</id>
+    <version>##VERSION##</version>
+    <title>gobetween</title>
+    <authors>yyyar</authors>
+    <owners>TechIsCool</owners>
+    <licenseUrl>https://github.com/yyyar/gobetween/blob/master/LICENSE</licenseUrl>
+    <projectUrl>http://gobetween.io/index.html</projectUrl>
+    <packageSourceUrl>https://github.com/TechIsCool/chocolatey-gobetween</packageSourceUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Make Your Load Balancing Great Again!
+    gobetween is free, open-source, modern and minimalistic L4 
+    load balancer and reverse proxy for the Cloud era
+    </description>
+    <summary>Gobetween Modern and minimalistic load balancer for the Сloud era</summary>
+    <releaseNotes>##RELEASENOTES##</releaseNotes>
+    <tags>gobetween</tags>
+    <dependencies>
+      <dependency id="nssm" />
+    </dependencies>
+  </metadata>
+</package>
