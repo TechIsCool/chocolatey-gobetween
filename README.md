@@ -10,11 +10,17 @@ This package installs the Gobetween Go package and registers as Service for the 
 *NOTE*: This does not start gobetween on install. Please start it with `Start-Service gobetween`
 
 This Package is a template that will automatically be upgraded when a new verison is release.
+ * `/InstallationPath:` - Where to install the binaries to - defaults to "`$env:SystemDrive:\ProgramData\gobetween`"
+ * `/ConfigPath:` - Where to source the configuration from - defaults to "`${InstallPath}\config\gobetween.toml`"
+ * `/ConfigType:` - determines what type of config (toml, json) - defaults to "toml"
+ * `/Command:` - What Command to use (from-consul, from-file, from-url) - defaults to "from-file"
+ * `/DisableFirewall_Metrics` - Disables Windows Firewall Rules - Metrics
+
 
 Please make sure when passing through the install parameter you use
 
 ```
--params "'-c C:\\Path\\To\\Config.toml'"
+-params '"/ConfigPath=C:\\Path\\To\\Config.json /ConfigType=json"'
 ```
 
 
