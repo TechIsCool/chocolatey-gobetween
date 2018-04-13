@@ -2,9 +2,12 @@
 
 $launch_path = "$(Split-Path -parent $MyInvocation.MyCommand.Definition)"
 
+$pp = Get-PackageParameters
+if (!$pp['InstallPath']) { $pp['InstallPath'] = "$env:SystemDrive:\ProgramData\${package}" }
+
 $choco_params = @{
   PackageName    = "$package"
-  UnzipLocation  = "C:\ProgramData\${package}"
+  UnzipLocation  = $pp['InstallPath']
   url           = "##FILEPATH##/##FILEx86##"
   url64         = "##FILEPATH##/##FILEx64##"
   checksum       = '##SHA256x86##'
@@ -16,22 +19,30 @@ $choco_params = @{
 
 Install-ChocolateyZipPackage @choco_params
 
+if (!$pp["DisableFirewall_Metrics"]){
+  Write-Output 'Firewall Rules Enabled'
+  New-NetFirewallRule -Name "${package}-Metrics-HTTP-In-TCP" `
+  -DisplayName "${package} (HTTP-In)" `
+  -Description "Inbound rule for ${package} Metrics. [TCP 9284]" `
+  -Protocol TCP `
+  -LocalPort "9284" `
+  -Action Allow `
+  -Profile Domain,Private
 
-# New-NetFirewallRule -Name "Gobetween-Metrics-HTTP-In-TCP" `
-# -DisplayName "Gobetween (HTTP-In)" `
-# -Description "Inbound rule for Gobetween Metrics. [TCP 9284]" `
-# -Protocol TCP `
-# -LocalPort "9284" `
-# -Action Allow `
-# -Profile Domain,Private
+  New-NetFirewallRule -Name "${package}-Metrics-HTTP-In-TCP-PUBLIC" `
+  -DisplayName "${package} (HTTP-In)" `
+  -Description "Inbound rule for ${package} Metrics. [TCP 9284]" `
+  -Protocol TCP `
+  -LocalPort "9284" `
+  -Action Allow `
+  -Profile Public
+}
 
-# New-NetFirewallRule -Name "Gobetween-Metrics-HTTP-In-TCP-PUBLIC" `
-# -DisplayName "Gobetween (HTTP-In)" `
-# -Description "Inbound rule for Gobetween Metrics. [TCP 9284]" `
-# -Protocol TCP `
-# -LocalPort "9284" `
-# -Action Allow `
-# -Profile Public
+if (!$pp['Command']) { $pp['Command'] = 'from-file' }
+if (!$pp['ConfigType']) { $pp['ConfigType'] = "toml" }
+if (!$pp['ConfigPath']) { $pp['ConfigPath'] = "$($pp['InstallPath'])\config\${package}.toml" }
 
-&nssm install "$package" "C:\ProgramData\${package}\${package}.exe" "$($env:chocolateyPackageParameters)"
+$args = "$($pp['Command']) -f $($pp['ConfigType']) -c '$($pp['ConfigPath'])'"
+
+&nssm install "$package" "C:\ProgramData\${package}\${package}.exe" "${args}"
 &nssm set "$package" Start SERVICE_AUTO_START
